@@ -7,7 +7,7 @@ library(htmltools)
 library(sf)
 library(rgdal)
 
-iDir <- "D:/OneDrive - CGIAR/Dev/mkn_restoration"
+iDir <- "."
 
 study_area <- readOGR(paste0(iDir, "/data/", "aoi.shp"))
 
@@ -17,9 +17,12 @@ village_boundaries <- readOGR(paste0(iDir, "/data/", "village_boundaries.shp"))
 
 micro_catchments <- readOGR(paste0(iDir, "/data/", "micro_catchments.shp"))
 
+sivap_areas <- readOGR(paste0(iDir, "/data/", "sivap_areas.shp"))
+
 ps_labels <- paste("Primary School: ", primary_schools$Name_of_Sc)
 vi_labels <- paste("Village Name: ", village_boundaries$village_n)
 mi_labels <- micro_catchments$Subbasin
+sivap_labels <- sivap_areas$ward
 
 map.ll <- leaflet() %>% 
   addProviderTiles(providers$Esri.WorldImagery, group = "Esri.WorldImagery (default)") %>% 
@@ -51,11 +54,14 @@ map.ll <- leaflet() %>%
   addPolygons(data = micro_catchments, weight = 3, color = "blue", fill = FALSE, stroke = TRUE, group = "Micro-catchments", label = mi_labels, 
               labelOptions = labelOptions(noHide = T, textOnly = TRUE, textsize = "20px", style = list('color' = "red"))) %>% 
   
+  addPolygons(data = sivap_areas, weight = 4, color = "white", dashArray = "3", fillOpacity = 0, group = "SIVAP areas", label = sivap_labels, 
+              labelOptions = labelOptions(style = list(`font-weight` = "normal", padding = "3px 8px"), textsize = "15px", direction = "auto")) %>%
+  
   addMeasure(position = "bottomleft", primaryLengthUnit = "meters", primaryAreaUnit = "hectares") %>% 
   
   addLayersControl(baseGroups = c("Esri.WorldImagery (default)", "Esri.WorldShadedRelief", "Esri.WorldStreetMap"), 
                    overlayGroups = c("Primary schools", "Study area", "Village boundaries", 
-                                     "Micro-catchments"), options = layersControlOptions(collapsed = FALSE))
+                                     "Micro-catchments", "SIVAP areas"), options = layersControlOptions(collapsed = FALSE))
 
 
 saveWidget(map.ll, file = paste0(getwd(), "/", "index", 
