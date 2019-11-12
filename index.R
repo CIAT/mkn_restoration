@@ -6,6 +6,7 @@ library(htmlwidgets)
 library(htmltools)
 library(sf)
 library(rgdal)
+library(leaflet.extras)
 
 iDir <- "."
 
@@ -29,7 +30,7 @@ map.ll <- leaflet() %>%
   
   addProviderTiles(providers$Esri.WorldStreetMap, group = "Esri.WorldStreetMap") %>% 
   
-  addProviderTiles(providers$OpenTopoMap, group = "Esri.WorldShadedRelief") %>% 
+  addProviderTiles(providers$OpenTopoMap, group = "Esri.WorldTerrain") %>% 
   
   addMiniMap(tiles = providers$Esri.NatGeoWorldMap, toggleDisplay = TRUE, 
              position = "bottomright") %>% 
@@ -39,8 +40,8 @@ map.ll <- leaflet() %>%
   addPolygons(data = study_area, weight = 5, color = "red", fill = FALSE, 
               stroke = TRUE, group = "Study area") %>% 
   
-  addCircleMarkers(data = primary_schools, weight = 5, color = "black", opacity = 0.5, 
-                   radius = 5, group = "Primary schools", label = ps_labels, 
+  addCircleMarkers(data = primary_schools, weight = 2, color = "black", opacity = 0.5, 
+                   radius = 4, group = "Primary schools", label = ps_labels, 
                    
                    labelOptions = labelOptions(style = list(`font-weight` = "normal", 
                                                             padding = "3px 8px"), textsize = "15px", direction = "auto")) %>% 
@@ -52,17 +53,20 @@ map.ll <- leaflet() %>%
                                                        padding = "3px 8px"), textsize = "15px", direction = "auto")) %>% 
   
   addPolygons(data = micro_catchments, weight = 3, color = "blue", fill = FALSE, stroke = TRUE, group = "Micro-catchments", label = mi_labels, 
-              labelOptions = labelOptions(noHide = T, textOnly = TRUE, textsize = "20px", style = list('color' = "red"))) %>% 
+              labelOptions = labelOptions(noHide = T, textOnly = TRUE, textsize = "20px", style = list('color' = "red", direction = "auto"))) %>% 
   
-  addPolygons(data = sivap_areas, weight = 4, color = "white", dashArray = "3", fillOpacity = 0, group = "SIVAP areas", label = sivap_labels, 
+  addPolygons(data = sivap_areas, weight = 5, color = "khaki", dashArray = "3", fillOpacity = 0, group = "SIVAP areas", label = sivap_labels, 
               labelOptions = labelOptions(style = list(`font-weight` = "normal", padding = "3px 8px"), textsize = "15px", direction = "auto")) %>%
   
   addMeasure(position = "bottomleft", primaryLengthUnit = "meters", primaryAreaUnit = "hectares") %>% 
   
-  addLayersControl(baseGroups = c("Esri.WorldImagery (default)", "Esri.WorldShadedRelief", "Esri.WorldStreetMap"), 
+  addLayersControl(baseGroups = c("Esri.WorldImagery (default)", "Esri.WorldTerrain", "Esri.WorldStreetMap"), 
                    overlayGroups = c("Primary schools", "Study area", "Village boundaries", 
-                                     "Micro-catchments", "SIVAP areas"), options = layersControlOptions(collapsed = FALSE))
+                                     "Micro-catchments", "SIVAP areas"), options = layersControlOptions(collapsed = FALSE)) %>% 
+  
+  addControlGPS(options = gpsOptions(position = "topleft", activate = TRUE, 
+                                     autoCenter = TRUE, maxZoom = 60, 
+                                     setView = TRUE)) %>% 
+  activateGPS()
 
-
-saveWidget(map.ll, file = paste0(getwd(), "/", "index", 
-                                 ".html", sep = ""))
+saveWidget(map.ll, file = paste0(getwd(), "/", "index", ".html", sep = ""))
