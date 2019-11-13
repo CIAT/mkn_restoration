@@ -66,7 +66,7 @@ map.ll <- leaflet() %>%
   
   addControlGPS(options = gpsOptions(position = "topleft", activate = TRUE, 
                                      autoCenter = TRUE, maxZoom = 60, 
-                                     setView = TRUE)) %>% 
-  activateGPS()
+                                     setView = TRUE)) 
+  # activateGPS()
 
 saveWidget(map.ll, file = paste0(getwd(), "/", "index", ".html", sep = ""))
