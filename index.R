@@ -12,6 +12,8 @@ iDir <- "."
 
 study_area <- readOGR(paste0(iDir, "/data/", "aoi.shp"))
 
+rooftops <- readOGR(paste0(iDir, "/data/", "rooftops.shp"))
+
 primary_schools <- readOGR(paste0(iDir, "/data/", "primary_schools.shp"))
 
 village_boundaries <- readOGR(paste0(iDir, "/data/", "village_boundaries.shp"))
@@ -40,7 +42,10 @@ map.ll <- leaflet() %>%
   addPolygons(data = study_area, weight = 5, color = "red", fill = FALSE, 
               stroke = TRUE, group = "Study area") %>% 
   
-  addCircleMarkers(data = primary_schools, weight = 2, color = "black", opacity = 0.5, 
+  addCircleMarkers(data = rooftops, weight = 3, color = "orangered", opacity = 0.5, radius = 3,
+                   group = "Rooftops") %>% 
+  
+  addCircleMarkers(data = primary_schools, weight = 4, color = "black", opacity = 0.5, 
                    radius = 4, group = "Primary schools", label = ps_labels, 
                    
                    labelOptions = labelOptions(style = list(`font-weight` = "normal", 
@@ -61,7 +66,7 @@ map.ll <- leaflet() %>%
   addMeasure(position = "bottomleft", primaryLengthUnit = "meters", primaryAreaUnit = "hectares") %>% 
   
   addLayersControl(baseGroups = c("Esri.WorldImagery (default)", "Esri.WorldTerrain", "Esri.WorldStreetMap"), 
-                   overlayGroups = c("Primary schools", "Study area", "Village boundaries", 
+                   overlayGroups = c("Primary schools", "Rooftops", "Study area", "Village boundaries", 
                                      "Micro-catchments", "SIVAP areas"), options = layersControlOptions(collapsed = FALSE)) %>% 
   
   addControlGPS(options = gpsOptions(position = "topleft", activate = TRUE, 
